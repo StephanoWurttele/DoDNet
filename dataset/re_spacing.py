@@ -25,10 +25,13 @@ for root1, dirs1, _ in os.walk(ori_path):
         # if i_dirs1 != '0Liver':
         #     continue
         ###########################################################################
-        if i_dirs1 == '1Kidney':
+        if i_dirs1 == 'xd':
             for root2, dirs2, files2 in os.walk(os.path.join(root1, i_dirs1)):
+                print(root2)
+                
 
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, 'origin')):
+                    
 
                     for i_dirs3 in sorted(dirs3):  # case_00000
                         # if int(i_dirs3[-2:])!=4:
@@ -38,6 +41,7 @@ for root1, dirs1, _ in os.walk(ori_path):
                             for i_files4 in sorted(files4):
                                 # read img
                                 print("Processing %s" % (i_files4))
+                                print("a")
                                 img_path = os.path.join(root4, i_files4)
                                 imageITK = sitk.ReadImage(img_path)
                                 image = sitk.GetArrayFromImage(imageITK)
@@ -93,7 +97,11 @@ for root1, dirs1, _ in os.walk(ori_path):
                             continue
                         # read img
                         print("Processing %s" % (i_files3))
+                        print("b")
                         img_path = os.path.join(root3, i_files3)
+                        print(i_files3)
+                        print(root3)
+                        print(img_path)
                         imageITK = sitk.ReadImage(img_path)
                         image = sitk.GetArrayFromImage(imageITK)
                         ori_size = np.array(imageITK.GetSize())[[2, 1, 0]]
