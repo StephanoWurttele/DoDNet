@@ -59,6 +59,24 @@ The folder structure of dataset should be like
 Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1qj8dJ_G1sHiCmJx_IQjACQhjUQnb4flg/view?usp=sharing)
 
 ### 3. Training
+
+Install dependencies:
+```
+!pip install SimpleITK
+!pip install batchgenerators
+!pip install batchgenerators==0.20.0
+!pip install tensorboardX
+```
+
+If you require to install apex, run:
+```
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --disable-pip-version-check --no-cache-dir \
+--global-option="--cpp_ext" --global-option="--cuda_ext" ./
+```
+If you get a "cuda version" or related error: In `setup.py`, in the method `check_cuda_torch_binary_vs_bare_metal`, comment the if with the Raise Error in case your CUDA version mismatches. Might raise errors, but also may not.
+
 * cd `a_DynConv/' and run 
 ```
 CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 --master_port=$RANDOM train.py \
