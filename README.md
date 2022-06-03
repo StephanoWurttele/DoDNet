@@ -61,12 +61,12 @@ Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1q
 ### 3. Training
 * cd `a_DynConv/' and run 
 ```
-CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 --master_port=$RANDOM train.py \
---train_list='list/MOTS/MOTS_train.txt' \
+!CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.launch --nproc_per_node=1 --master_port=$RANDOM ./a_DynConv/train.py \
+--train_list='list/MOTS/MOTS_train_con_pancreas.txt' \
 --snapshot_dir='snapshots/dodnet' \
 --input_size='64,192,192' \
 --batch_size=2 \
---num_gpus=2 \
+--num_gpus=1 \
 --num_epochs=1000 \
 --start_epoch=0 \
 --learning_rate=1e-2 \
