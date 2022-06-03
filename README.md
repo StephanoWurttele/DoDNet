@@ -23,6 +23,16 @@ PyTorch==1.4.0<br />
 git clone https://github.com/jianpengz/DoDNet.git
 cd DoDNet
 ```
+### 0.5 Installation packages
+!pip install SimpleITK
+!pip install batchgenerators
+!pip install batchgenerators==0.20.0
+!pip install tensorboardX
+!git clone https://github.com/NVIDIA/apex
+%cd ..
+!pip install -v --disable-pip-version-check --no-cache-dir \
+--global-option="--cpp_ext" --global-option="--cuda_ext" ./
+si sale error, comentar el if
 ### 1. MOTS Dataset Preparation
 Before starting, MOTS should be re-built from the serveral medical organ and tumor segmentation datasets
 
