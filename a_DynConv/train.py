@@ -1,7 +1,8 @@
 import argparse
 import os, sys
 
-sys.path.append("..")
+###sys.path.append("..")
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
 import torch
 import torch.nn as nn
@@ -47,8 +48,8 @@ def get_arguments():
 
     parser = argparse.ArgumentParser(description="unet3D_DynConv882")
 
-    parser.add_argument("--data_dir", type=str, default='../dataset/')
-    parser.add_argument("--train_list", type=str, default='list/MOTS/MOTS_train.txt')
+    parser.add_argument("--data_dir", type=str, default='dataset/')
+    parser.add_argument("--train_list", type=str, default='list/MOTS/MOTS_train_con_pancreas.txt')
     parser.add_argument("--val_list", type=str, default='list/MOTS/xx.txt')
     parser.add_argument("--snapshot_dir", type=str, default='snapshots/fold1/')
     parser.add_argument("--reload_path", type=str, default='snapshots/fold1/xx.pth')
@@ -94,12 +95,12 @@ def main():
     """Create the model and start the training."""
     parser = get_arguments()
     print(parser)
-
     with Engine(custom_parser=parser) as engine:
+        print("aqui empieza el engine")
+        
         args = parser.parse_args()
         if args.num_gpus > 1:
             torch.cuda.set_device(args.local_rank)
-
         writer = SummaryWriter(args.snapshot_dir)
 
         if not args.gpu == 'None':
@@ -115,7 +116,6 @@ def main():
         torch.manual_seed(seed)
         if torch.cuda.is_available():
             torch.cuda.manual_seed(seed)
-
         # Create model
         model = UNet3D(num_classes=args.num_classes, weight_std=args.weight_std)
 
@@ -152,7 +152,8 @@ def main():
 
         if not os.path.exists(args.snapshot_dir):
             os.makedirs(args.snapshot_dir)
-
+        print("este es el train listtttt")
+        print(args.train_list)
         trainloader, train_sampler = engine.get_train_loader(
             MOTSDataSet(args.data_dir, args.train_list, max_iters=args.itrs_each_epoch * args.batch_size, crop_size=input_size, scale=args.random_scale, mirror=args.random_mirror), 
             collate_fn=my_collate)
