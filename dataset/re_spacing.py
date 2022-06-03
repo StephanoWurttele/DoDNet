@@ -5,7 +5,7 @@ from skimage.transform import resize
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import SimpleITK as sitk
-
+import platform
 spacing = {
     0: [1.5, 0.8, 0.8],
     1: [1.5, 0.8, 0.8],
@@ -18,18 +18,24 @@ spacing = {
 
 ori_path = './0123456'
 new_path = './0123456_spacing_same'
+if(platform.system() == 'Windows'):
+    print("AAA")
+    from pathlib import Path
+    base_path = Path(__file__).parent
+    ori_path = os.path.join(base_path, "0123456")
+    new_path = os.path.join(base_path, "0123456_spacing_same")
 
 count = -1
 for root1, dirs1, _ in os.walk(ori_path):
+    print(ori_path)
+    print(root1,dirs1,_)
     for i_dirs1 in tqdm(sorted(dirs1)):  # 0Liver
         # if i_dirs1 != '0Liver':
         #     continue
         ###########################################################################
         if i_dirs1 == '1Kidney':
             for root2, dirs2, files2 in os.walk(os.path.join(root1, i_dirs1)):
-
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, 'origin')):
-
                     for i_dirs3 in sorted(dirs3):  # case_00000
                         # if int(i_dirs3[-2:])!=4:
                         #     continue
@@ -85,11 +91,10 @@ for root1, dirs1, _ in os.walk(ori_path):
 
         #############################################################################
         for root2, dirs2, files2 in os.walk(os.path.join(root1, i_dirs1)):
-            for i_dirs2 in sorted(dirs2):  # imagesTr
-
+            for i_dirs2 in sorted(dirs2):  # imagesTr!!!!!!!!!!!!!!!!!!!!!!!!
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, i_dirs2)):
                     for i_files3 in sorted(files3):
-                        if i_files3[0] == '.':
+                        if i_files3[0] == '.' or i_files3[0] == 'f':
                             continue
                         # read img
                         print("Processing %s" % (i_files3))

@@ -36,6 +36,11 @@ Colon | [data](http://medicaldecathlon.com/)
 Lung | [data](http://medicaldecathlon.com/)
 Spleen | [data](http://medicaldecathlon.com/)
 
+```
+pip install skimage / conda install -c anaconda scikit-image
+
+```
+
 * Download and put these datasets in `dataset/0123456/`. 
 * Re-spacing the data by `python re_spacing.py`, the re-spaced data will be saved in `0123456_spacing_same/`.
 
