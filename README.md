@@ -37,7 +37,9 @@ Lung | [data](http://medicaldecathlon.com/)
 Spleen | [data](http://medicaldecathlon.com/)
 
 ```
-pip install skimage / conda install -c anaconda scikit-image
+pip install skimage   / conda install -c anaconda scikit-image
+pip install tqdm      / conda install -c conda-forge tqdm
+pip install SimpleITK / conda install -c simpleitk simpleitk
 
 ```
 
