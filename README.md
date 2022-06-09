@@ -68,7 +68,7 @@ The folder structure of dataset should be like
 
 
 ### 2. Model
-Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1qj8dJ_G1sHiCmJx_IQjACQhjUQnb4flg/view?usp=sharing)
+Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1qj8dJ_G1sHiCmJx_IQjACQhjUQnb4flg/view?usp=sharing) 
 
 ### 3. Training
 * cd `a_DynConv/' and run 
@@ -104,10 +104,11 @@ CUDA_VISIBLE_DEVICES=0 python evaluate.py \
 ```
 
 ### 5. Post-processing
+
+quitar parametro neighbor en las funciones LAB()
 ```
 python postp.py --img_folder_path='outputs/dodnet/'
 ```
-
 ### 6. Citation
 If this code is helpful for your study, please cite:
 ```
