@@ -68,9 +68,11 @@ The folder structure of dataset should be like
 
 
 ### 2. Model
-Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1qj8dJ_G1sHiCmJx_IQjACQhjUQnb4flg/view?usp=sharing) 
+Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1qj8dJ_G1sHiCmJx_IQjACQhjUQnb4flg/view?usp=sharing). Use this to skip step 3.
 
 ### 3. Training
+This step can be skipped and go straight to step 4 if Model from step 2 was installed.
+
 * cd `a_DynConv/' and run 
 ```
 !CUDA_VISIBLE_DEVICES=1 python -m torch.distributed.launch --nproc_per_node=1 --master_port=$RANDOM ./a_DynConv/train.py \
@@ -92,7 +94,7 @@ Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1q
 
 ### 4. Evaluation
 ```
-CUDA_VISIBLE_DEVICES=0 python evaluate.py \
+CUDA_VISIBLE_DEVICES=0 python ./a_DynConv/evaluate.py \
 --val_list='list/MOTS/MOTS_test.txt' \
 --reload_from_checkpoint=True \
 --reload_path='snapshots/dodnet/MOTS_DynConv_checkpoint.pth' \
@@ -103,12 +105,22 @@ CUDA_VISIBLE_DEVICES=0 python evaluate.py \
 --num_workers=2
 ```
 
+In order to visualize using "revealSegmentation.py", consider the line 195 "np.save("pred_organ.npy",pred_organ)" which was not on the original code. With this, revealSegmentation can have something to work with.
+
 ### 5. Post-processing
 
-quitar parametro neighbor en las funciones LAB()
+En el archivo postp.py, remover parametro neighbor en las funciones LAB() (linea 36 y 54)
+
 ```
 python postp.py --img_folder_path='outputs/dodnet/'
 ```
+
+To visualize the segmentation, run
+
+```
+python revealSegmentation.py
+```
+
 ### 6. Citation
 If this code is helpful for your study, please cite:
 ```
