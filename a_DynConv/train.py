@@ -4,35 +4,35 @@ import os, sys
 ###sys.path.append("..")
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 
-import torch
-import torch.nn as nn
-from torch.utils import data
-import numpy as np
-import pickle
-import cv2
-import torch.optim as optim
-import scipy.misc
-import torch.backends.cudnn as cudnn
-import torch.nn.functional as F
-import matplotlib.pyplot as plt
+# import torch
+# import torch.nn as nn
+# from torch.utils import data
+# import numpy as np
+# import pickle
+# import cv2
+# import torch.optim as optim
+# import scipy.misc
+# import torch.backends.cudnn as cudnn
+# import torch.nn.functional as F
+# import matplotlib.pyplot as plt
 
 import os.path as osp
-from unet3D_DynConv882 import UNet3D
-from MOTSDataset import MOTSDataSet, my_collate
+# from unet3D_DynConv882 import UNet3D
+# from MOTSDataset import MOTSDataSet, my_collate
 
-import random
-import timeit
-from tensorboardX import SummaryWriter
-from loss_functions import loss
+# import random
+# import timeit
+# from tensorboardX import SummaryWriter
+# from loss_functions import loss
 
-from sklearn import metrics
-from math import ceil
+# from sklearn import metrics
+# from math import ceil
 
-from engine import Engine
-from apex import amp
-from apex.parallel import convert_syncbn_model
+# from engine import Engine
+# from apex import amp
+# from apex.parallel import convert_syncbn_model
 
-start = timeit.default_timer()
+# start = timeit.default_timer()
 
 
 def str2bool(v):
@@ -80,25 +80,28 @@ def get_arguments():
     return parser
 
 
-def lr_poly(base_lr, iter, max_iter, power):
-    return base_lr * ((1 - float(iter) / max_iter) ** (power))
+# def lr_poly(base_lr, iter, max_iter, power):
+#     return base_lr * ((1 - float(iter) / max_iter) ** (power))
 
 
-def adjust_learning_rate(optimizer, i_iter, lr, num_stemps, power):
-    """Sets the learning rate to the initial LR divided by 5 at 60th, 120th and 160th epochs"""
-    lr = lr_poly(lr, i_iter, num_stemps, power)
-    optimizer.param_groups[0]['lr'] = lr
-    return lr
+# def adjust_learning_rate(optimizer, i_iter, lr, num_stemps, power):
+#     """Sets the learning rate to the initial LR divided by 5 at 60th, 120th and 160th epochs"""
+#     lr = lr_poly(lr, i_iter, num_stemps, power)
+#     optimizer.param_groups[0]['lr'] = lr
+#     return lr
 
 
 def main():
     """Create the model and start the training."""
     parser = get_arguments()
     print(parser)
+    args = parser.parse_args()
+    print(args.snapshot_dir.split('/'))
+    print(args.snapshot_dir, 'MOTS_DynConv_' + args.snapshot_dir.split('/')[-2] + '_e' + str(1) + '.pth')
+    exit(0)
     with Engine(custom_parser=parser) as engine:
         print("aqui empieza el engine")
         
-        args = parser.parse_args()
         if args.num_gpus > 1:
             torch.cuda.set_device(args.local_rank)
         writer = SummaryWriter(args.snapshot_dir)
