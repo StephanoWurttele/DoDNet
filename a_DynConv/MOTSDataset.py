@@ -438,6 +438,169 @@ class MOTSValDataSet(data.Dataset):
         return image.copy(), label.copy(), name, task_id, labelNII.affine
 
 
+class MOTSValDataSetAquije(data.Dataset):
+    def __init__(self, max_iters=None, crop_size=(64, 256, 256), mean=(128, 128, 128), scale=False,
+                 mirror=False, ignore_label=255):
+        self.crop_d, self.crop_h, self.crop_w = crop_size
+        self.scale = scale
+        self.ignore_label = ignore_label
+        self.mean = mean
+        self.is_mirror = mirror
+
+        self.files = []
+        spacing = {
+            0: [0.8, 0.8, 1.5],
+            1: [0.8, 0.8, 1.5],
+            2: [0.8, 0.8, 1.5],
+            3: [0.8, 0.8, 1.5],
+            4: [0.8, 0.8, 1.5],
+            5: [0.8, 0.8, 1.5],
+            6: [0.8, 0.8, 1.5],
+        }
+        task_id = 3
+        img_file = "/content/drive/MyDrive/respacing_aquije/aquije_spacing.nii.gz"
+        self.files.append({
+            "image": img_file,
+            "task_id": task_id,
+            "spacing": spacing[task_id]
+        })
+        print('1 images are loaded!')
+
+    def __len__(self):
+        return len(self.files)
+
+    def truncate(self, CT, task_id):
+        min_HU = -325
+        max_HU = 325
+        subtract = 0
+        divide = 325.
+        
+        # truncate
+        CT[np.where(CT <= min_HU)] = min_HU
+        CT[np.where(CT >= max_HU)] = max_HU
+        CT = CT - subtract
+        CT = CT / divide
+        return CT
+
+    def id2trainId(self, label, task_id):
+        if task_id == 0 or task_id == 1 or task_id == 3:
+            organ = (label >= 1)
+            tumor = (label == 2)
+        elif task_id == 2:
+            organ = (label == 1)
+            tumor = (label == 2)
+        elif task_id == 4 or task_id == 5:
+            organ = None
+            tumor = (label == 1)
+        elif task_id == 6:
+            organ = (label == 1)
+            tumor = None
+        else:
+            print("Error, No such task!")
+            return None
+
+        shape = label.shape
+        results_map = np.zeros((2, shape[0], shape[1], shape[2])).astype(np.float32)
+
+        if organ is None:
+            results_map[0, :, :, :] = results_map[0, :, :, :] - 1
+        else:
+            results_map[0, :, :, :] = np.where(organ, 1, 0)
+        if tumor is None:
+            results_map[1, :, :, :] = results_map[1, :, :, :] - 1
+        else:
+            results_map[1, :, :, :] = np.where(tumor, 1, 0)
+
+        return results_map
+
+    def locate_bbx(self, label, scaler):
+
+        scale_d = int(self.crop_d * scaler)
+        scale_h = int(self.crop_h * scaler)
+        scale_w = int(self.crop_w * scaler)
+
+        img_h, img_w, img_d = label.shape
+        boud_h, boud_w, boud_d = np.where(label >= 1)
+        margin = 32  # pixels
+        bbx_h_min = boud_h.min()
+        bbx_h_max = boud_h.max()
+        bbx_w_min = boud_w.min()
+        bbx_w_max = boud_w.max()
+        bbx_d_min = boud_d.min()
+        bbx_d_max = boud_d.max()
+        if (bbx_h_max - bbx_h_min) <= scale_h:
+            bbx_h_maxt = bbx_h_max + (scale_h - (bbx_h_max - bbx_h_min)) // 2
+            bbx_h_mint = bbx_h_min - (scale_h - (bbx_h_max - bbx_h_min)) // 2
+            bbx_h_max = bbx_h_maxt
+            bbx_h_min = bbx_h_mint
+        if (bbx_w_max - bbx_w_min) <= scale_w:
+            bbx_w_maxt = bbx_w_max + (scale_w - (bbx_w_max - bbx_w_min)) // 2
+            bbx_w_mint = bbx_w_min - (scale_w - (bbx_w_max - bbx_w_min)) // 2
+            bbx_w_max = bbx_w_maxt
+            bbx_w_min = bbx_w_mint
+        if (bbx_d_max - bbx_d_min) <= scale_d:
+            bbx_d_maxt = bbx_d_max + (scale_d - (bbx_d_max - bbx_d_min)) // 2
+            bbx_d_mint = bbx_d_min - (scale_d - (bbx_d_max - bbx_d_min)) // 2
+            bbx_d_max = bbx_d_maxt
+            bbx_d_min = bbx_d_mint
+        bbx_h_min = np.max([bbx_h_min - margin, 0])
+        bbx_h_max = np.min([bbx_h_max + margin, img_h])
+        bbx_w_min = np.max([bbx_w_min - margin, 0])
+        bbx_w_max = np.min([bbx_w_max + margin, img_w])
+        bbx_d_min = np.max([bbx_d_min - margin, 0])
+        bbx_d_max = np.min([bbx_d_max + margin, img_d])
+
+        if random.random() < 0.8:
+            d0 = random.randint(bbx_d_min, bbx_d_max - scale_d)
+            h0 = random.randint(bbx_h_min, bbx_h_max - scale_h)
+            w0 = random.randint(bbx_w_min, bbx_w_max - scale_w)
+        else:
+            d0 = random.randint(0, img_d - scale_d)
+            h0 = random.randint(0, img_h - scale_h)
+            w0 = random.randint(0, img_w - scale_w)
+        d1 = d0 + scale_d
+        h1 = h0 + scale_h
+        w1 = w0 + scale_w
+        return [h0, h1, w0, w1, d0, d1]
+
+    def pad_image(self, img, target_size):
+        """Pad an image up to the target size."""
+        rows_missing = math.ceil(target_size[0] - img.shape[0])
+        cols_missing = math.ceil(target_size[1] - img.shape[1])
+        dept_missing = math.ceil(target_size[2] - img.shape[2])
+        if rows_missing < 0:
+            rows_missing = 0
+        if cols_missing < 0:
+            cols_missing = 0
+        if dept_missing < 0:
+            dept_missing = 0
+
+        padded_img = np.pad(img, ((0, rows_missing), (0, cols_missing), (0, dept_missing)), 'constant')
+        return padded_img
+
+    def __getitem__(self, index):
+        datafiles = self.files[index]
+        # read nii file
+        imageNII = nib.load(datafiles["image"])
+        image = imageNII.get_data()
+        task_id = datafiles["task_id"]
+
+        if task_id == 1:
+            image = image.transpose((1, 2, 0))
+
+        image = self.pad_image(image, [self.crop_h, self.crop_w, self.crop_d])
+
+        image = self.truncate(image, task_id)
+
+        image = image[np.newaxis, :]
+
+        image = image.transpose((0, 3, 1, 2))  # Channel x Depth x H x W
+
+        image = image.astype(np.float32)
+
+        return image.copy(), task_id
+
+
 def get_train_transform():
     tr_transforms = []
 
@@ -470,3 +633,4 @@ def my_collate(batch):
     tr_transforms = get_train_transform()
     data_dict = tr_transforms(**data_dict)
     return data_dict
+
