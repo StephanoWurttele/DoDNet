@@ -26,13 +26,25 @@ cd DoDNet
 ### 0.5 Installation packages
 ```
 !pip install SimpleITK
-!pip install batchgenerators
 !pip install batchgenerators==0.20.0
 !pip install tensorboardX
 !git clone https://github.com/NVIDIA/apex
-%cd ..
+%cd apex
 !pip install -v --disable-pip-version-check --no-cache-dir \
 --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+%cd ..
+```
+Or with conda
+```
+!conda install -c simpleitk simpleitk
+conda install -c anaconda pillow
+!pip install batchgenerators==0.20.0 // !pip install batchgenerators
+!conda install -c conda-forge tensorboardx
+!git clone https://github.com/NVIDIA/apex
+%cd apex
+!pip install -v --disable-pip-version-check --no-cache-dir \
+--global-option="--cpp_ext" --global-option="--cuda_ext" ./
+%cd ..
 ```
 si sale error, comentar el if
 ### 1. MOTS Dataset Preparation
