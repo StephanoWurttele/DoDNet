@@ -18,7 +18,7 @@ spacing = {
 
 count = -1
 
-img_path = "/content/drive/MyDrive/501_arterial_idose_4.nii.gz"
+img_path = "patient/501_arterial_idose_4.nii.gz"
 print(img_path)
 imageITK = sitk.ReadImage(img_path)
 image = sitk.GetArrayFromImage(imageITK)
@@ -48,4 +48,4 @@ saveITK = sitk.GetImageFromArray(image_resize)
 saveITK.SetSpacing(target_spacing[[2, 1, 0]])
 saveITK.SetOrigin(ori_origin)
 saveITK.SetDirection(ori_direction)
-sitk.WriteImage(saveITK, os.path.join("/content/drive/MyDrive/respacing_aquije/","aquije_spacing.nii.gz"))
+sitk.WriteImage(saveITK, os.path.join("patient/","patient_spacing.nii.gz"))

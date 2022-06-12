@@ -24,28 +24,31 @@ git clone https://github.com/jianpengz/DoDNet.git
 cd DoDNet
 ```
 ### 0.5 Installation packages
+Use Python Version 3.7.13.
+
+If using conda, run the following commands:
 ```
-!pip install SimpleITK
-!pip install batchgenerators==0.20.0
-!pip install tensorboardX
-!git clone https://github.com/NVIDIA/apex
-%cd apex
-!pip install -v --disable-pip-version-check --no-cache-dir \
---global-option="--cpp_ext" --global-option="--cuda_ext" ./
-%cd ..
-```
-Or with conda
-```
-!conda install -c simpleitk simpleitk
+conda create --name DoDNet python=3.7.13
+conda activate DoDNet
 conda install -c anaconda pillow
-!pip install batchgenerators==0.20.0 // !pip install batchgenerators
-!conda install -c conda-forge tensorboardx
-!git clone https://github.com/NVIDIA/apex
-%cd apex
-!pip install -v --disable-pip-version-check --no-cache-dir \
+pip install batchgenerators==0.20
+conda install -c pytorch pytorch
+conda install -c conda-forge opencv
+conda install -c conda-forge matplotlib
+conda install -c pytorch torchvision
+conda install -c conda-forge nibabel
+conda install -c simpleitk simpleit
+conda install -c conda-forge tensorboardx
+
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --disable-pip-version-check --no-cache-dir 
 --global-option="--cpp_ext" --global-option="--cuda_ext" ./
-%cd ..
+cd ..
 ```
+
+For Apex, a requirement might be to install Miscrosoft Visual C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+
 si sale error, comentar el if
 ### 1. MOTS Dataset Preparation
 Before starting, MOTS should be re-built from the serveral medical organ and tumor segmentation datasets
@@ -118,6 +121,17 @@ CUDA_VISIBLE_DEVICES=0 python ./a_DynConv/evaluate.py \
 ```
 
 In order to visualize using "revealSegmentation.py", consider the line 195 "np.save("pred_organ.npy",pred_organ)" which was not on the original code. With this, revealSegmentation can have something to work with.
+
+# 4.1. Private Evaluation
+
+For Hospital Guillermo Almenara CTs, when acquired, include dicom files in `/dataset/patient/dicom_files`. Then run `a_DynConv/niiGeneration`. If in windows, might need to replace line to:
+```
+dicom2nifti.convert_directory("..\\dataset\\patient\\dicom_files","..\\dataset\\patient")
+```
+
+Then run `re_spacing_patient.py` to prepare input.
+
+
 
 ### 5. Post-processing
 

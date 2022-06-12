@@ -438,7 +438,7 @@ class MOTSValDataSet(data.Dataset):
         return image.copy(), label.copy(), name, task_id, labelNII.affine
 
 
-class MOTSValDataSetAquije(data.Dataset):
+class MOTSValDataSetPatient(data.Dataset):
     def __init__(self, max_iters=None, crop_size=(64, 256, 256), mean=(128, 128, 128), scale=False,
                  mirror=False, ignore_label=255):
         self.crop_d, self.crop_h, self.crop_w = crop_size
@@ -458,7 +458,7 @@ class MOTSValDataSetAquije(data.Dataset):
             6: [0.8, 0.8, 1.5],
         }
         task_id = 3
-        img_file = "/content/drive/MyDrive/respacing_aquije/aquije_spacing.nii.gz"
+        img_file = "../dataset/patient/patient_spacing.nii.gz"
         self.files.append({
             "image": img_file,
             "task_id": task_id,

@@ -20,7 +20,7 @@ from scipy.ndimage.filters import gaussian_filter
 import os.path as osp
 
 from unet3D_DynConv882 import UNet3D
-from MOTSDataset import MOTSValDataSetAquije
+from MOTSDataset import MOTSValDataSetPatient
 
 import random
 import timeit
@@ -56,8 +56,8 @@ def get_arguments():
     parser = argparse.ArgumentParser(description="MOTS: DynConv solution!")
 
     parser.add_argument("--data_dir", type=str, default='../dataset/')
-    parser.add_argument("--val_list", type=str, default='/content/drive/MyDrive/DoDNetfiles/dataset/list/MOTS/MOTS_test.txt')
-    parser.add_argument("--reload_path", type=str, default='/content/drive/MyDrive/DoDNetfiles/snapshots/dodnet/MOTS_DynConv_checkpoint_v1.pth')
+    parser.add_argument("--val_list", type=str, default='../dataset/list/MOTS/MOTS_test.txt')
+    parser.add_argument("--reload_path", type=str, default='../snapshots/dodnet/MOTS_DynConv_checkpoint_v1.pth')
     parser.add_argument("--reload_from_checkpoint", type=str2bool, default=True)
     parser.add_argument("--save_path", type=str, default='outputs/')
 
@@ -202,7 +202,7 @@ def save_nii(args, pred): # bs, c, WHD
     # save
     for tt in range(seg_pred.shape[0]):
         seg_pred_tt = seg_pred[tt]
-        np.save("aquije_prediccion2.npy",seg_pred_tt)
+        np.save("../dataset/patient/results/patient_prediccion2.npy",seg_pred_tt)
     return None
 
 def validate(args, input_size, model, ValLoader, num_classes, engine):
@@ -271,7 +271,7 @@ def main():
 
 
         valloader, val_sampler = engine.get_test_loader(
-            MOTSValDataSetAquije())
+            MOTSValDataSetPatient())
 
         print('validate ...')
         validate(args, input_size, [model], valloader, args.num_classes, engine)
