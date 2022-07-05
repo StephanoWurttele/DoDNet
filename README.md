@@ -111,6 +111,7 @@ git clone https://github.com/NVIDIA/apex
 cd apex
 pip install -v --disable-pip-version-check --no-cache-dir \
 --global-option="--cpp_ext" --global-option="--cuda_ext" ./
+```
 
 If you get a "cuda version" or related error: In `setup.py`, in the method `check_cuda_torch_binary_vs_bare_metal`, comment the if with the Raise Error in case your CUDA version mismatches. Might raise errors, but also may not.
 
