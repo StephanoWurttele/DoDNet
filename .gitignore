@@ -1,1 +1,5 @@
-*.nii.gz
+*nii.gz
+__pycache__*
+apex
+*dcm
+*.npy

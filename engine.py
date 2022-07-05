@@ -42,10 +42,15 @@ class Engine(object):
 
         if 'WORLD_SIZE' in os.environ:
             self.distributed = int(os.environ['WORLD_SIZE']) > 1
+            print("este es el world size")
+            print(os.environ['WORLD_SIZE'])
             print("WORLD_SIZE is %d" % (int(os.environ['WORLD_SIZE'])))
         if self.distributed:
+            
             self.local_rank = self.args.local_rank
             self.world_size = int(os.environ['WORLD_SIZE'])
+            print("este es el selflocalrank")
+            print(self.local_rank)
             torch.cuda.set_device(self.local_rank)
             dist.init_process_group(backend="nccl", init_method='env://')
             self.devices = [i for i in range(self.world_size)]

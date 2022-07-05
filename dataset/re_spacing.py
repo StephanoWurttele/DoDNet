@@ -27,9 +27,8 @@ if(platform.system() == 'Windows'):
 
 count = -1
 for root1, dirs1, _ in os.walk(ori_path):
-    print(ori_path)
-    print(root1,dirs1,_)
     for i_dirs1 in tqdm(sorted(dirs1)):  # 0Liver
+        print(i_dirs1)
         # if i_dirs1 != '0Liver':
         #     continue
         ###########################################################################
@@ -44,6 +43,7 @@ for root1, dirs1, _ in os.walk(ori_path):
                             for i_files4 in sorted(files4):
                                 # read img
                                 print("Processing %s" % (i_files4))
+                                print("a")
                                 img_path = os.path.join(root4, i_files4)
                                 imageITK = sitk.ReadImage(img_path)
                                 image = sitk.GetArrayFromImage(imageITK)
@@ -94,11 +94,15 @@ for root1, dirs1, _ in os.walk(ori_path):
             for i_dirs2 in sorted(dirs2):  # imagesTr!!!!!!!!!!!!!!!!!!!!!!!!
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, i_dirs2)):
                     for i_files3 in sorted(files3):
-                        if i_files3[0] == '.' or i_files3[0] == 'f':
+                        if i_files3[0] == '.':
                             continue
                         # read img
                         print("Processing %s" % (i_files3))
+                        print("b")
                         img_path = os.path.join(root3, i_files3)
+                        print(i_files3)
+                        print(root3)
+                        print(img_path)
                         imageITK = sitk.ReadImage(img_path)
                         image = sitk.GetArrayFromImage(imageITK)
                         ori_size = np.array(imageITK.GetSize())[[2, 1, 0]]
