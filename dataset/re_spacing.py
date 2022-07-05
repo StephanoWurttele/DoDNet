@@ -5,7 +5,7 @@ from skimage.transform import resize
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import SimpleITK as sitk
-
+import platform
 spacing = {
     0: [1.5, 0.8, 0.8],
     1: [1.5, 0.8, 0.8],
@@ -18,12 +18,15 @@ spacing = {
 
 ori_path = './0123456'
 new_path = './0123456_spacing_same'
+if(platform.system() == 'Windows'):
+    print("AAA")
+    from pathlib import Path
+    base_path = Path(__file__).parent
+    ori_path = os.path.join(base_path, "0123456")
+    new_path = os.path.join(base_path, "0123456_spacing_same")
 
 count = -1
 for root1, dirs1, _ in os.walk(ori_path):
-    print(root1)
-    print(dirs1)
-    print(_)
     for i_dirs1 in tqdm(sorted(dirs1)):  # 0Liver
         print(i_dirs1)
         # if i_dirs1 != '0Liver':
@@ -31,12 +34,7 @@ for root1, dirs1, _ in os.walk(ori_path):
         ###########################################################################
         if i_dirs1 == '1Kidney':
             for root2, dirs2, files2 in os.walk(os.path.join(root1, i_dirs1)):
-                print(root2)
-                
-
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, 'origin')):
-                    
-
                     for i_dirs3 in sorted(dirs3):  # case_00000
                         # if int(i_dirs3[-2:])!=4:
                         #     continue
@@ -93,21 +91,9 @@ for root1, dirs1, _ in os.walk(ori_path):
 
         #############################################################################
         for root2, dirs2, files2 in os.walk(os.path.join(root1, i_dirs1)):
-            print(root2 + "root2")
-            print("dirs2")
-            print(dirs2)
             for i_dirs2 in sorted(dirs2):  # imagesTr!!!!!!!!!!!!!!!!!!!!!!!!
-                print("i_dirs2")
-                print(i_dirs2)
-
                 for root3, dirs3, files3 in os.walk(os.path.join(root2, i_dirs2)):
-                    print(root3 + "root3")
-                    print("dirs3")
-                    print(dirs3)
-                    print("files3")
-                    print(files3)
                     for i_files3 in sorted(files3):
-                        print(i_files3 + "Sssss")
                         if i_files3[0] == '.':
                             continue
                         # read img

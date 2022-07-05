@@ -64,6 +64,13 @@ Colon | [data](http://medicaldecathlon.com/)
 Lung | [data](http://medicaldecathlon.com/)
 Spleen | [data](http://medicaldecathlon.com/)
 
+```
+pip install skimage   / conda install -c anaconda scikit-image
+pip install tqdm      / conda install -c conda-forge tqdm
+pip install SimpleITK / conda install -c simpleitk simpleitk
+
+```
+
 * Download and put these datasets in `dataset/0123456/`. 
 * Re-spacing the data by `python re_spacing.py`, the re-spaced data will be saved in `0123456_spacing_same/`.
 
@@ -88,6 +95,25 @@ Pretrained model is available in [checkpoint](https://drive.google.com/file/d/1q
 
 ### 3. Training
 This step can be skipped and go straight to step 4 if Model from step 2 was installed.
+
+
+Install dependencies:
+```
+!pip install SimpleITK
+!pip install batchgenerators
+!pip install batchgenerators==0.20.0
+!pip install tensorboardX
+```
+
+If you require to install apex, run:
+```
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --disable-pip-version-check --no-cache-dir \
+--global-option="--cpp_ext" --global-option="--cuda_ext" ./
+
+If you get a "cuda version" or related error: In `setup.py`, in the method `check_cuda_torch_binary_vs_bare_metal`, comment the if with the Raise Error in case your CUDA version mismatches. Might raise errors, but also may not.
+
 
 * cd `a_DynConv/' and run 
 ```
