@@ -57,7 +57,7 @@ def get_arguments():
 
     parser.add_argument("--data_dir", type=str, default='../dataset/')
     parser.add_argument("--val_list", type=str, default='../dataset/list/MOTS/MOTS_test.txt')
-    parser.add_argument("--reload_path", type=str, default='../snapshots/dodnet/MOTS_DynConv_checkpoint_v1.pth')
+    parser.add_argument("--reload_path", type=str, default='../snapshot/dodnet/MOTS_DynConv_checkpoint_v1.pth')
     parser.add_argument("--reload_from_checkpoint", type=str2bool, default=True)
     parser.add_argument("--save_path", type=str, default='outputs/')
 
@@ -202,7 +202,7 @@ def save_nii(args, pred): # bs, c, WHD
     # save
     for tt in range(seg_pred.shape[0]):
         seg_pred_tt = seg_pred[tt]
-        np.save("../dataset/patient/results/patient_prediccion2.npy",seg_pred_tt)
+        np.save("./dataset/patient/results/patient_prediccion2.npy",seg_pred_tt)
     return None
 
 def validate(args, input_size, model, ValLoader, num_classes, engine):
@@ -210,7 +210,9 @@ def validate(args, input_size, model, ValLoader, num_classes, engine):
     for index, batch in enumerate(ValLoader):
         # print('%d processd' % (index))
         image, task_id = batch
-        
+        #For later use
+        savename = "./dataset/patient/input_npys/input_image"+str(index)+".npy"
+        np.save(savename, image.numpy())
         with torch.no_grad():
 
             pred_sigmoid = predict_sliding(args, model, image.numpy(), input_size, num_classes, task_id)
@@ -219,18 +221,16 @@ def validate(args, input_size, model, ValLoader, num_classes, engine):
     return 
 
 
-
-
 def main():
     """Create the model and start the training."""
     parser = get_arguments()
     print(parser)
 
     with Engine(custom_parser=parser) as engine:
+        print("In engine")
         args = parser.parse_args()
-        if args.num_gpus > 1:
-            torch.cuda.set_device(args.local_rank)
-
+        # if args.num_gpus > 1:
+        #     torch.cuda.set_device(args.local_rank)
         d, h, w = map(int, args.input_size.split(','))
         input_size = (d, h, w)
 
@@ -242,7 +242,8 @@ def main():
         if torch.cuda.is_available():
             torch.cuda.manual_seed(seed)
 
-        # Create network. 
+        # # Create network. 
+        model = ""
         model = UNet3D(num_classes=args.num_classes, weight_std=args.weight_std)
 
         model = nn.DataParallel(model)
@@ -276,6 +277,6 @@ def main():
         print('validate ...')
         validate(args, input_size, [model], valloader, args.num_classes, engine)
 
-
+# snapshot\dodnet\MOTS_DynConv_checkpoint_v1.pth
 if __name__ == '__main__':
     main()

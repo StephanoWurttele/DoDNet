@@ -30,26 +30,27 @@ If using conda, run the following commands:
 ```
 conda create --name DoDNet python=3.7.13
 conda activate DoDNet
-conda install -c anaconda pillow
 pip install batchgenerators==0.20
-conda install -c pytorch pytorch
+conda install -c anaconda pillow==7.0.0
+conda install -c pytorch pytorch==1.8.1 torchvision==0.9.1 torchaudio==0.8.1
 conda install -c conda-forge opencv
-conda install -c conda-forge matplotlib
-conda install -c pytorch torchvision
+conda install -c conda-forge matplotlib==3.2.2
 conda install -c conda-forge nibabel
-conda install -c simpleitk simpleit
+conda install -c simpleitk simpleitk
 conda install -c conda-forge tensorboardx
-
+```
+For Apex do:
+```
 git clone https://github.com/NVIDIA/apex
 cd apex
-pip install -v --disable-pip-version-check --no-cache-dir 
---global-option="--cpp_ext" --global-option="--cuda_ext" ./
+pip install -v --disable-pip-version-check --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 cd ..
 ```
+On windows:
+For Apex, a requirement might be to install Miscrosoft Visual C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/. Also, must revert to commit [#793](https://github.com/NVIDIA/apex/commit/2ec84ebdca59278eaf15e8ddf32476d9d6d8b904).
 
-For Apex, a requirement might be to install Miscrosoft Visual C++ Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
+If you get a "cuda version" or related error: In setup.py, in the method check_cuda_torch_binary_vs_bare_metal, comment the if with the Raise Error in case your CUDA version mismatches. Might raise errors, but also may not.
 
-si sale error, comentar el if
 ### 1. MOTS Dataset Preparation
 Before starting, MOTS should be re-built from the serveral medical organ and tumor segmentation datasets
 
@@ -128,13 +129,18 @@ For Hospital Guillermo Almenara CTs, when acquired, include dicom files in `/dat
 ```
 dicom2nifti.convert_directory("..\\dataset\\patient\\dicom_files","..\\dataset\\patient")
 ```
+Then evaluate by defining environment variable CUDA_VISIBLE_DEVICES = 0 with
+```
+setx CUDA_VISIBLE_DEVICES 0
+```
+and restart your terminal. Then run
+```
+python a_DynConv/evaluate_patient.py --val_list=list/MOTS/MOTS_test.txt --reload_from_checkpoint=True --reload_path=./snapshot/dodnet/MOTS_DynConv_checkpoint_v1.pth --save_path=output --input_size=64,192,192 --batch_size=1 --num_gpus=1 --num_workers=2
+```
 
-Then run `re_spacing_patient.py` to prepare input.
-
-
+Then run `re_spacing_patient.py` to prepare input. (I think this is not necessary)
 
 ### 5. Post-processing
-
 En el archivo postp.py, remover parametro neighbor en las funciones LAB() (linea 36 y 54)
 
 ```

@@ -458,7 +458,7 @@ class MOTSValDataSetPatient(data.Dataset):
             6: [0.8, 0.8, 1.5],
         }
         task_id = 3
-        img_file = "../dataset/patient/patient_spacing.nii.gz"
+        img_file = "./dataset/patient/patient_spacing.nii.gz"
         self.files.append({
             "image": img_file,
             "task_id": task_id,
